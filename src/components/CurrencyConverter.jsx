@@ -22,12 +22,9 @@ function CurrencyConverter({ url }) {
     try {
       const response = await fetch(endpoint);
       if (!response.ok) {
-        throw new Error("Network response was ok");
-        // setError("Please try again");
-        // return;
+        throw new Error("Network response was not ok");
       }
       const data = await response.json();
-      // console.log(data);
       return data;
     } catch (error) {
       console.error("Fetch error:", error);
@@ -37,21 +34,23 @@ function CurrencyConverter({ url }) {
   };
 
   const fetchCurrencies = async () => {
-    const data = await sendRequest(`https://www.frankfurter.app/currencies`);
+    const data = await sendRequest(`http://localhost:5000/api/currencies`);
     if (data) {
       console.log("fetchCurrencies", data);
       setCurrencies(Object.keys(data));
     }
   };
+
   const fetchRate = async () => {
     const data = await sendRequest(
-      `https://www.frankfurter.app/latest?amount=${amount}&from=${fromCurrency}&to=${toCurrency}`
+      `http://localhost:5000/api/latest?amount=${amount}&from=${fromCurrency}&to=${toCurrency}`
     );
     if (data) {
       console.log("fetchRate", data);
       setRate(data);
     }
   };
+
   return (
     <div className="currency-converter">
       <h2>Convert Currency</h2>
@@ -96,12 +95,13 @@ function CurrencyConverter({ url }) {
         <div>
           {rate && (
             <p>
-              {amount} {fromCurrency} is approximately {rate.result}{" "}
+              {amount} {fromCurrency} is approximately {rate.rates[toCurrency]}{" "}
               {toCurrency}
             </p>
           )}
         </div>
       </form>
+      {error && <p className="error">{error}</p>}
     </div>
   );
 }
