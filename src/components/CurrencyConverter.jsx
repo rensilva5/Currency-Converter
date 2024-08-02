@@ -20,15 +20,17 @@ function CurrencyConverter({ url }) {
 
   const sendRequest = async (endpoint) => {
     try {
+      setError("");
       const response = await fetch(endpoint);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
+      console.log("try test");
       const data = await response.json();
       return data;
     } catch (error) {
       console.error("Fetch error:", error);
-      setError("Service is unavailable, try again");
+      setError("Wrong request, try again a different value or params");
       return null;
     }
   };
@@ -54,6 +56,7 @@ function CurrencyConverter({ url }) {
   return (
     <div className="currency-converter">
       <h2>Convert Currency</h2>
+      {/* {error && <h2 className="error">{error}</h2>} */}
       <form>
         <div>
           <label>Amount</label>
@@ -92,15 +95,18 @@ function CurrencyConverter({ url }) {
             ))}
           </select>
         </div>
+      </form>
+      <h2 className="currency-coverter-error">
         <div>
-          {rate && (
+          {rate && rate.rates && rate.rates[toCurrency] && (
             <p>
-              {amount} {fromCurrency} is approximately {rate.rates[toCurrency]}{" "}
-              {toCurrency}
+              {amount} {fromCurrency} is approximately{" "}
+              {(amount * rate.rates[toCurrency]).toFixed(2)} {toCurrency}
             </p>
           )}
         </div>
-      </form>
+      </h2>
+
       {error && <p className="error">{error}</p>}
     </div>
   );
